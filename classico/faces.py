@@ -8,13 +8,13 @@ class FaceDetector:
     face_cascade = None
     eye_cascade = None
 
-    def __init__(self,eyes=True):
+    def __init__(self,face_cascade='haarcascade_frontalface_default.xml',eye_cascade = 'haarcascade_eye.xml', eyes=True):
 
         self.eyes = eyes
-        self.face_cascade = cv2.CascadeClassifier(os.path.join('data','haarcascades','haarcascade_frontalface_default.xml'))
+        self.face_cascade = cv2.CascadeClassifier(face_cascade)
 
         if(self.eyes):
-            self.eye_cascade = cv2.CascadeClassifier(os.path.join('data','haarcascades','haarcascade_eye.xml'))
+            self.eye_cascade = cv2.CascadeClassifier(eye_cascade)
 
 
     def detect_face_from_img(self,image):
