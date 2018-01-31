@@ -8,10 +8,12 @@ class FaceDetector:
     face_cascade = None
     eye_cascade = None
 
-    def __init__(self,face_cascade='haarcascade_frontalface_default.xml',eye_cascade = 'haarcascade_eye.xml', eyes=True):
+    def __init__(self,face_cascade='haarcascade_frontalface_default.xml',face_profile_cascade = 'haarcascade_profileface.xml',
+                 eye_cascade = 'haarcascade_eye.xml', eyes=True):
 
         self.eyes = eyes
         self.face_cascade = cv2.CascadeClassifier(face_cascade)
+        self.face_profile_cascade = cv2.CascadeClassifier(face_profile_cascade)
 
         if(self.eyes):
             self.eye_cascade = cv2.CascadeClassifier(eye_cascade)
@@ -25,7 +27,16 @@ class FaceDetector:
         else:
             gray = np.copy(image)
 
-        faces = self.face_cascade.detectMultiScale(gray, 1.2, 4)
+        faces = self.face_cascade.detectMultiScale(gray, 1.2, 5)
+        face_profiles = self.face_profile_cascade.detectMultiScale(gray,1.2,5)
+
+        if(len(faces) and len(face_profiles)):
+            for i in face_profiles:
+                np.append(faces,i)
+        elif(len(face_profiles)):
+            faces = face_profiles
+
+
         for (x, y, w, h) in faces:
             cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
             roi_gray = gray[y:y + h, x:x + w]
@@ -35,6 +46,7 @@ class FaceDetector:
                 eyes = self.eye_cascade.detectMultiScale(roi_gray)
                 for (ex, ey, ew, eh) in eyes:
                     cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
+
 
 
         return image
